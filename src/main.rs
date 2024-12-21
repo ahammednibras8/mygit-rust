@@ -1,10 +1,16 @@
-mod commands; // Declare the `commands` module
+mod commands;
 
-use commands::init; // Import the `init` module
+use commands::init;
 
 fn main() {
-    println!("Hello, from main!");
+    let args: Vec<String> = std::env::args().collect();
 
-    // Call the init function
-    init::init();
+    match args.get(1).map(String::as_str) {
+        Some("init") => {
+            if let Err(err) = init::init() {
+                eprintln!("Error: {}", err);
+            }
+        }
+        _ => eprintln!("Usage: mygit <command>"),
+    }
 }
