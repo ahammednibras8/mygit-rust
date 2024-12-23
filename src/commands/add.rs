@@ -1,16 +1,20 @@
-use std::fs;
-use std::path::Path;
 use sha1::{Digest, Sha1};
+use std::fs;
+use std::path::PathBuf;
 
 pub fn add(file_path: &str) -> Result<(), anyhow::Error> {
+    let current_dir = std::env::current_dir()?;
+    let mygit_dir = current_dir.join(".mygit");
+
     //Checking .mygit directory exists
-    let mygit_dir = Path::new(".mygit");
     if !mygit_dir.exists() {
-        return Err(anyhow::anyhow!("Not a mygit repository (or any of the parent directories)"));
+        return Err(anyhow::anyhow!(
+            "Not a mygit repository (or any of the parent directories)"
+        ));
     }
 
     //Checking if the file exists
-    let file = Path::new(file_path);
+    let file = PathBuf::from(file_path).canonicalize()?;
     if !file.exists() {
         return Err(anyhow::anyhow!("File '{}' not found", file_path));
     }
